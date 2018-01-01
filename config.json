@@ -1,0 +1,10 @@
+{
+    "initial_lr" : 1e-2,
+    "lr_decay_factor" : 0.1,
+    "epoch" : 120,
+    "num_epoch_per_decay": 30,
+    "moving_average_decay" : 0.9999,
+    "batch_size" : 128,
+    "log_frequency" : 10,
+    "dropout" : 0.5
+}
