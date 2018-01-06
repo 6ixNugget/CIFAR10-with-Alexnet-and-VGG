@@ -32,19 +32,18 @@ def inference(images, CONFIG):
     conv4_3 = _conv_layer(conv4_2, 512, 512, "conv4_3")
     pool4 = _max_pool(conv4_3, "pool4")
 
-    # # Block 3: 3 conv + 1 pool
-    # conv5_1 = _conv_layer(pool4, 512, 512, "conv5_1")
-    # conv5_2 = _conv_layer(conv5_1, 512, 512, "conv5_2")
-    # conv5_3 = _conv_layer(conv5_2, 512, 512, "conv5_3")
-    # pool5 = _max_pool(conv5_3, "pool5")
+    # Block 5: 3 conv + 1 pool, input 2 * 2
+    conv5_1 = _conv_layer(pool4, 512, 512, "conv5_1")
+    conv5_2 = _conv_layer(conv5_1, 512, 512, "conv5_2")
+    conv5_3 = _conv_layer(conv5_2, 512, 512, "conv5_3")
+    pool5 = _max_pool(conv5_3, "pool5")
 
-    fc5 = _fc_layer_with_activation(pool4, 2048, 1024, tf.nn.relu, "fc5")
+    # FC: input 1 * 1
+    fc5 = _fc_layer_with_activation(pool5, 512, 512, tf.nn.relu, "fc5")
     fc5_dropout = tf.nn.dropout(fc5, CONFIG["dropout"])
-    fc6 = _fc_layer_with_activation(fc5_dropout, 1024, 1024, tf.nn.relu, "fc6")
-    fc6_dropout = tf.nn.dropout(fc6, CONFIG["dropout"])
-    fc7 = _fc_layer(fc6_dropout, 1024, data.NUM_CLASSES, "fc7")
+    fc6 = _fc_layer(fc5_dropout, 512, data.NUM_CLASSES, "fc6")
 
-    return fc7
+    return fc6
 
 
 def loss(logits, labels):
@@ -99,7 +98,7 @@ def train(total_loss, global_step, CONFIG, lr_overrides=None):
 
     # Compute gradients.
     with tf.control_dependencies([loss_averages_op]):
-        opt = tf.train.GradientDescentOptimizer(lr)
+        opt = tf.train.AdamOptimizer(learning_rate=lr)
         grads = opt.compute_gradients(total_loss)
 
     # Apply gradients.
