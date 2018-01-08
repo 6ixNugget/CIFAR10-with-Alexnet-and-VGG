@@ -98,7 +98,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 
 def evaluate():
     """Eval CIFAR-10 for a number of steps."""
-    test_data, test_labels = data.read_in_test_data(FLAGS.data_dir)
+    (_, _), (test_data, test_labels) = cifar10.load_data()
     
     with tf.Graph().as_default() as g:
         # Get images and labels for CIFAR-10.
