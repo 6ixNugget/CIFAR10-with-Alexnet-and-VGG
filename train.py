@@ -8,6 +8,7 @@ from time import gmtime, strftime
 from PIL import Image
 
 import tensorflow as tf
+import numpy as np
 from tensorflow.python.keras.datasets import cifar10
 
 import data
@@ -48,23 +49,24 @@ def parse_config():
 def start_training():
     """Train CIFAR-10 for a number of steps."""
     (training_data, training_labels), (_, _) = cifar10.load_data()
+    training_data = training_data.astype(np.float32)
+    training_labels = training_labels.reshape(-1).astype(np.int32)
 
     with tf.Graph().as_default():
         global_step = tf.train.get_or_create_global_step()
 
         with tf.name_scope('input'):
-            input_data = tf.constant(training_data, dtype=tf.float32)
-            input_labels = tf.constant(training_labels, dtype=tf.int32)
+            input_data = tf.constant(training_data)
+            input_labels = tf.constant(training_labels)
 
             image, label = tf.train.slice_input_producer([input_data, input_labels],
                                                          num_epochs=CONFIG["epoch"])
-            label = tf.cast(label, tf.int32)
             images, labels = tf.train.batch([image, label], batch_size=CONFIG["batch_size"])
 
         # Build a Graph that computes the logits predictions from the
         # inference model.
         logits = model.inference(images, CONFIG)
-        
+
         # Calculate loss.
         loss = model.loss(logits, labels)
 
