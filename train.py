@@ -49,9 +49,9 @@ def parse_config():
 def start_training():
     """Train CIFAR-10 for a number of steps."""
     (training_data, training_labels), (_, _) = cifar10.load_data()
-    training_data = training_data.astype(np.float32)
+    training_data = data.img_normalize(training_data.astype(np.float32))
     training_labels = training_labels.reshape(-1).astype(np.int32)
-
+    
     with tf.Graph().as_default():
         global_step = tf.train.get_or_create_global_step()
 

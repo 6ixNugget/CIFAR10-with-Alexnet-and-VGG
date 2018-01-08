@@ -100,7 +100,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 def evaluate():
     """Eval CIFAR-10 for a number of steps."""
     (_, _), (test_data, test_labels) = cifar10.load_data()
-    test_data = test_data.astype(np.float32)
+    test_data = data.img_normalize(test_data.astype(np.float32))
     test_labels = test_labels.reshape(-1).astype(np.int32)
 
     with tf.Graph().as_default() as g:

@@ -89,6 +89,15 @@ def _unpickle(filename):
         data_dict = pickle.load(file, encoding='bytes')
     return data_dict
 
+def img_normalize(arr):
+    """
+    Zero mean unit variance image normalization.
+    """
+    mean = np.mean(arr, axis=(0, 1, 2, 3))
+    std = np.std(arr, axis=(0, 1, 2, 3))
+    arr = (arr - mean)/(std + 1e-7)
+    return arr
+
 def maybe_download_and_extract(dest_directory):
     """Download and extract the tarball from Alex's website."""
     if not os.path.exists(dest_directory):
