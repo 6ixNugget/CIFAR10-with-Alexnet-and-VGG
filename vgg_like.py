@@ -174,7 +174,7 @@ def _conv_layer(bottom, in_channels, out_channels, weight_decay, name):
 
         conv_output = tf.nn.conv2d(bottom, filt, [1, 1, 1, 1], padding='SAME')
         bias_output = tf.nn.bias_add(conv_output, bias)
-        batch_norm_output = tf.layers.batch_normalization(bias_output)
+        batch_norm_output = tf.layers.batch_normalization(bias_output, training=True)
         relu = tf.nn.relu(batch_norm_output)
 
         _activation_summary(relu)
