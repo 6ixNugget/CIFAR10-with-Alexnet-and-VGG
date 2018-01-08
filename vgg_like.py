@@ -14,30 +14,38 @@ def inference(images, CONFIG):
 
     # Block 1: 2 conv + 1 pool, input 32 * 32
     conv1_1 = _conv_layer(images, 3, 64, weight_decay, "conv1_1")
-    conv1_2 = _conv_layer(conv1_1, 64, 64, weight_decay, "conv1_2")
+    conv1_1_dropout = tf.nn.dropout(conv1_1, 0.3)
+    conv1_2 = _conv_layer(conv1_1_dropout, 64, 64, weight_decay, "conv1_2")
     pool1 = _max_pool(conv1_2, "pool1")
 
     # Block 2: 2 conv + 1 pool, input 16 * 16
     conv2_1 = _conv_layer(pool1, 64, 128, weight_decay, "conv2_1")
-    conv2_2 = _conv_layer(conv2_1, 128, 128, weight_decay, "conv2_2")
+    conv2_1_dropout = tf.nn.dropout(conv2_1, 0.4)
+    conv2_2 = _conv_layer(conv2_1_dropout, 128, 128, weight_decay, "conv2_2")
     pool2 = _max_pool(conv2_2, "pool2")
 
     # Block 3: 3 conv + 1 pool, input 8 * 8
     conv3_1 = _conv_layer(pool2, 128, 256, weight_decay, "conv3_1")
-    conv3_2 = _conv_layer(conv3_1, 256, 256, weight_decay, "conv3_2")
-    conv3_3 = _conv_layer(conv3_2, 256, 256, weight_decay, "conv3_3")
+    conv3_1_dropout = tf.nn.dropout(conv3_1, 0.4)
+    conv3_2 = _conv_layer(conv3_1_dropout, 256, 256, weight_decay, "conv3_2")
+    conv3_2_dropout = tf.nn.dropout(conv3_2, 0.4)
+    conv3_3 = _conv_layer(conv3_2_dropout, 256, 256, weight_decay, "conv3_3")
     pool3 = _max_pool(conv3_3, "pool3")
 
     # Block 4: 3 conv + 1 pool, input 4 * 4
     conv4_1 = _conv_layer(pool3, 256, 512, weight_decay, "conv4_1")
-    conv4_2 = _conv_layer(conv4_1, 512, 512, weight_decay, "conv4_2")
-    conv4_3 = _conv_layer(conv4_2, 512, 512, weight_decay, "conv4_3")
+    conv4_1_dropout = tf.nn.dropout(conv4_1, 0.4)
+    conv4_2 = _conv_layer(conv4_1_dropout, 512, 512, weight_decay, "conv4_2")
+    conv4_2_dropout = tf.nn.dropout(conv4_2, 0.4)
+    conv4_3 = _conv_layer(conv4_2_dropout, 512, 512, weight_decay, "conv4_3")
     pool4 = _max_pool(conv4_3, "pool4")
 
     # Block 5: 3 conv + 1 pool, input 2 * 2
     conv5_1 = _conv_layer(pool4, 512, 512, weight_decay, "conv5_1")
-    conv5_2 = _conv_layer(conv5_1, 512, 512, weight_decay, "conv5_2")
-    conv5_3 = _conv_layer(conv5_2, 512, 512, weight_decay, "conv5_3")
+    conv5_1_dropout = tf.nn.dropout(conv5_1, 0.4)
+    conv5_2 = _conv_layer(conv5_1_dropout, 512, 512, weight_decay, "conv5_2")
+    conv5_2_dropout = tf.nn.dropout(conv5_2, 0.4)
+    conv5_3 = _conv_layer(conv5_2_dropout, 512, 512, weight_decay, "conv5_3")
     pool5 = _max_pool(conv5_3, "pool5")
 
     # FC: input 1 * 1
