@@ -7,6 +7,7 @@ from time import gmtime, strftime
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.keras.datasets import cifar10
 
 import train
 import data
@@ -99,8 +100,8 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 def evaluate():
     """Eval CIFAR-10 for a number of steps."""
     (_, _), (test_data, test_labels) = cifar10.load_data()
-    training_data = training_data.astype(np.float32)
-    training_labels = training_labels.reshape(-1).astype(np.int32)
+    test_data = test_data.astype(np.float32)
+    test_labels = test_labels.reshape(-1).astype(np.int32)
 
     with tf.Graph().as_default() as g:
         # Get images and labels for CIFAR-10.

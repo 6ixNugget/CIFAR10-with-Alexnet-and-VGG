@@ -7,8 +7,8 @@ from time import gmtime, strftime
 
 from PIL import Image
 
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from tensorflow.python.keras.datasets import cifar10
 
 import data
