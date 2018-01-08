@@ -104,8 +104,8 @@ def evaluate():
         # Get images and labels for CIFAR-10.
 
             with tf.name_scope('input'):
-                input_data = tf.constant(test_data)
-                input_labels = tf.constant(test_labels)
+                input_data = tf.constant(test_data, dtype=tf.float32)
+                input_labels = tf.constant(test_labels, dtype=tf.int32)
 
                 image, label = tf.train.slice_input_producer([input_data, input_labels])
                 label = tf.cast(label, tf.int32)

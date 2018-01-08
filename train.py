@@ -53,8 +53,8 @@ def start_training():
         global_step = tf.train.get_or_create_global_step()
 
         with tf.name_scope('input'):
-            input_data = tf.constant(training_data)
-            input_labels = tf.constant(training_labels)
+            input_data = tf.constant(training_data, dtype=tf.float32)
+            input_labels = tf.constant(training_labels, dtype=tf.int32)
 
             image, label = tf.train.slice_input_producer([input_data, input_labels],
                                                          num_epochs=CONFIG["epoch"])
