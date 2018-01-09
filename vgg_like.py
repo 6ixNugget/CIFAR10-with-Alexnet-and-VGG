@@ -10,7 +10,7 @@ def _get_variable_with_normal_init(name, shape, stddev):
 
 def inference(images, CONFIG):
 
-    weight_decay = CONFIG["weight_decay"]
+    weight_decay = CONFIG["weight_decay"] if CONFIG["wd_mode"] else None
 
     # Block 1: 2 conv + 1 pool, input 32 * 32
     conv1_1 = _conv_layer(images, 3, 64, weight_decay, "conv1_1")
