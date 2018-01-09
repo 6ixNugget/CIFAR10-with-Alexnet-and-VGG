@@ -110,7 +110,7 @@ def train(total_loss, global_step, CONFIG, lr_overrides=None):
 
     # Compute gradients.
     with tf.control_dependencies([loss_averages_op]):
-        opt = tf.train.GradientDescentOptimizer(lr)
+        opt = tf.train.AdamOptimizer(learning_rate=lr)
         grads = opt.compute_gradients(total_loss)
 
     # Apply gradients.
