@@ -48,8 +48,10 @@ def inference(images, CONFIG):
     conv5_3 = _conv_layer(conv5_2_dropout, 512, 512, weight_decay, "conv5_3")
     pool5 = _max_pool(conv5_3, "pool5")
 
+    pool5_dropout = tf.nn.dropout(pool5, 0.5)
+
     # FC: input 1 * 1
-    fc5 = _fc_layer_with_activation(pool5, 512, 512, tf.nn.relu, "fc5")
+    fc5 = _fc_layer_with_activation(pool5_dropout, 512, 512, tf.nn.relu, "fc5")
     fc5_dropout = tf.nn.dropout(fc5, CONFIG["dropout"])
     fc6 = _fc_layer(fc5_dropout, 512, data.NUM_CLASSES, "fc6")
 
