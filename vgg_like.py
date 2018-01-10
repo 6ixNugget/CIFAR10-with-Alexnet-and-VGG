@@ -48,14 +48,16 @@ def inference(images, CONFIG):
     conv5_3 = _conv_layer(conv5_2_dropout, 512, 512, weight_decay, "conv5_3")
     pool5 = _max_pool(conv5_3, "pool5")
 
-    pool5_dropout = tf.nn.dropout(pool5, 0.5)
+    pool5_dropout = tf.nn.dropout(pool5, CONFIG["dropout"])
 
     # FC: input 1 * 1
-    fc5 = _fc_layer_with_activation(pool5_dropout, 512, 512, tf.nn.relu, "fc5")
+    fc5 = _fc_layer_with_activation(pool5_dropout, 512, 512, "fc5")
     fc5_dropout = tf.nn.dropout(fc5, CONFIG["dropout"])
-    fc6 = _fc_layer(fc5_dropout, 512, data.NUM_CLASSES, "fc6")
+    fc6 = _fc_layer_with_activation(fc5_dropout, 512, 512, "fc6")
+    fc6_dropout = tf.nn.dropout(fc6, CONFIG["dropout"])
+    fc7 = _fc_layer(fc6_dropout, 512, data.NUM_CLASSES, "fc7")
 
-    return fc6
+    return fc7
 
 
 def loss(logits, labels):
@@ -180,11 +182,10 @@ def _max_pool(bottom, name):
 
 def _conv_layer(bottom, in_channels, out_channels, weight_decay, name):
     with tf.variable_scope(name):
-        filt, bias = _get_conv_var(3, in_channels, out_channels, weight_decay, name)
+        filt = _get_conv_var(3, in_channels, out_channels, weight_decay, name)
 
         conv_output = tf.nn.conv2d(bottom, filt, [1, 1, 1, 1], padding='SAME')
-        bias_output = tf.nn.bias_add(conv_output, bias)
-        batch_norm_output = tf.layers.batch_normalization(bias_output, training=True)
+        batch_norm_output = tf.layers.batch_normalization(conv_output, training=True)
         relu = tf.nn.relu(batch_norm_output)
 
         _activation_summary(relu)
@@ -200,16 +201,15 @@ def _fc_layer(bottom, in_size, out_size, name):
 
     return fc
 
-def _fc_layer_with_activation(bottom, in_size, out_size, activation, name):
+def _fc_layer_with_activation(bottom, in_size, out_size, name):
     fc = _fc_layer(bottom, in_size, out_size, name)
-    act = activation(fc)
+    relu = tf.nn.relu(fc)
         
-    _activation_summary(act)
+    _activation_summary(relu)
 
-    return act
+    return relu
 
 def _get_conv_var(filter_size, in_channels, out_channels, weight_decay, name):
-    #initial_value = tf.truncated_normal([filter_size, filter_size, in_channels, out_channels], 0.0, 0.001)
     filt = tf.get_variable(name + "_filter", shape=[filter_size, filter_size, in_channels, out_channels],
                            initializer=tf.contrib.layers.xavier_initializer())
 
@@ -217,10 +217,7 @@ def _get_conv_var(filter_size, in_channels, out_channels, weight_decay, name):
         wd = tf.multiply(tf.nn.l2_loss(filt), weight_decay, name='weight_loss')
         tf.add_to_collection('losses', wd)
 
-    initial_value = tf.truncated_normal([out_channels], .0, .001)
-    bias = tf.Variable(initial_value, name=name + "_bias")
-
-    return filt, bias
+    return filt
 
 def _get_fc_var(in_size, out_size, name):
     # initial_value = tf.truncated_normal([in_size, out_size], 0.0, 0.001)
